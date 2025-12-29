@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap');
+
+@layer base {
+  :root {
+    --background: 40 20% 98%;
+    --foreground: 250 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 250 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 250 30% 15%;
+
+    --primary: 259 50% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 259 20% 95%;
+    --secondary-foreground: 259 50% 35%;
+
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 259 30% 92%;
+    --accent-foreground: 259 50% 35%;
+
+    --success: 145 60% 42%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 45 95% 55%;
+    --warning-foreground: 30 50% 20%;
+
+    --insight: 45 100% 88%;
+    --insight-foreground: 30 50% 25%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 259 50% 45%;
+
+    --radius: 0.75rem;
+
+    --chart-productive: 145 60% 42%;
+    --chart-unproductive: 0 72% 60%;
+    --chart-neutral: 220 15% 75%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 250 25% 8%;
+    --foreground: 40 20% 95%;
+
+    --card: 250 20% 12%;
+    --card-foreground: 40 20% 95%;
+
+    --popover: 250 20% 12%;
+    --popover-foreground: 40 20% 95%;
+
+    --primary: 259 60% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 259 20% 20%;
+    --secondary-foreground: 259 40% 80%;
+
+    --muted: 250 15% 18%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 259 25% 20%;
+    --accent-foreground: 259 40% 80%;
+
+    --success: 145 55% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 45 90% 50%;
+    --warning-foreground: 30 50% 15%;
+
+    --insight: 45 80% 25%;
+    --insight-foreground: 45 100% 90%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 250 15% 20%;
+    --input: 250 15% 20%;
+    --ring: 259 60% 60%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+@layer components {
+  .focus-card {
+    @apply bg-card rounded-xl border border-border shadow-sm p-6 transition-all duration-200;
+  }
+
+  .focus-card:hover {
+    @apply shadow-md;
+  }
+
+  .metric-card {
+    @apply focus-card flex flex-col items-center justify-center text-center;
+  }
+
+  .insight-box {
+    @apply bg-insight text-insight-foreground rounded-xl p-5 border-l-4 border-warning;
+  }
+
+  .timer-display {
+    font-family: 'Space Grotesk', sans-serif;
+    @apply text-7xl font-light tracking-tight tabular-nums;
+  }
+
+  .duration-input {
+    font-family: 'Space Grotesk', sans-serif;
+    @apply text-5xl font-light tracking-tight tabular-nums text-center w-20 bg-transparent border-none outline-none;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+  }
+}
