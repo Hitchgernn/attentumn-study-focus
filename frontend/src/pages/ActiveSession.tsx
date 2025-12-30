@@ -10,17 +10,29 @@ interface SessionState {
   durationSeconds: number;
 }
 
+const focusThreshold = 60;
+
 const ActiveSession: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const sessionState = location.state as SessionState | null;
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
   const metricsIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const remainingRef = useRef(0);
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    sessionState?.durationSeconds || 0
-  );
+  const [remainingSeconds, setRemainingSeconds] = useState(sessionState?.durationSeconds || 0);
   const [isEnding, setIsEnding] = useState(false);
+  const [isVisible, setIsVisible] = useState(document.visibilityState === 'visible');
+  const [isFocused, setIsFocused] = useState(typeof document.hasFocus === 'function' ? document.hasFocus() : true);
+  const lastTickRef = useRef<number>(Date.now());
+  const productiveSecondsRef = useRef(0);
+  const unproductiveSecondsRef = useRef(0);
+  const focusScoreSumRef = useRef(0);
+  const focusSampleCountRef = useRef(0);
+  const awayStartedAtRef = useRef<number | null>(null);
+  const distractionsRef = useRef<Record<string, number>>({
+    tab_switch: 0,
+    long_absence: 0,
+  });
 
   useEffect(() => {
     if (!sessionState) {
@@ -40,6 +52,23 @@ const ActiveSession: React.FC = () => {
     remainingRef.current = remainingSeconds;
   }, [remainingSeconds]);
 
+  const currentFocusScore = useCallback(() => {
+    if (!isVisible || !isFocused) return 0;
+    return 100;
+  }, [isFocused, isVisible]);
+
+  const registerAwayReturn = useCallback(() => {
+    if (awayStartedAtRef.current === null) return;
+    const awayMs = Date.now() - awayStartedAtRef.current;
+    awayStartedAtRef.current = null;
+    if (awayMs < 5000) return;
+    if (awayMs <= 30000) {
+      distractionsRef.current.tab_switch += 1;
+    } else {
+      distractionsRef.current.long_absence += 1;
+    }
+  }, []);
+
   const sendSessionMetrics = useCallback(async () => {
     if (!sessionState || !apiBaseUrl) {
       if (!apiBaseUrl) {
@@ -48,21 +77,19 @@ const ActiveSession: React.FC = () => {
       return;
     }
 
-    const elapsedSeconds = Math.max(
-      sessionState.durationSeconds - remainingRef.current,
-      0
-    );
-    const avgFocusScore = Math.min(
-      Math.round((elapsedSeconds / Math.max(sessionState.durationSeconds, 1)) * 100),
-      100
-    );
+    const avgFocusScore =
+      focusSampleCountRef.current === 0
+        ? currentFocusScore()
+        : Math.round(focusScoreSumRef.current / focusSampleCountRef.current);
 
     const payload = {
       session_id: sessionState.sessionId,
       avg_focus_score: avgFocusScore,
-      productive_seconds: elapsedSeconds,
-      unproductive_seconds: 0,
-      distractions: [],
+      productive_seconds: Math.floor(productiveSecondsRef.current),
+      unproductive_seconds: Math.floor(unproductiveSecondsRef.current),
+      distractions: Object.entries(distractionsRef.current)
+        .filter(([, count]) => count > 0)
+        .map(([type, count]) => ({ type, count })),
     };
 
     try {
@@ -74,7 +101,67 @@ const ActiveSession: React.FC = () => {
     } catch (error) {
       console.error('Error sending session metrics:', error);
     }
-  }, [apiBaseUrl, sessionState]);
+  }, [apiBaseUrl, currentFocusScore, sessionState]);
+
+  useEffect(() => {
+    lastTickRef.current = Date.now();
+  }, []);
+
+  useEffect(() => {
+    const tick = () => {
+      const now = Date.now();
+      const deltaSeconds = Math.max((now - lastTickRef.current) / 1000, 0);
+      lastTickRef.current = now;
+
+      const score = currentFocusScore();
+      focusScoreSumRef.current += score * deltaSeconds;
+      focusSampleCountRef.current += deltaSeconds;
+
+      if (score >= focusThreshold) {
+        productiveSecondsRef.current += deltaSeconds;
+      } else {
+        unproductiveSecondsRef.current += deltaSeconds;
+      }
+    };
+
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [currentFocusScore]);
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      const visible = document.visibilityState === 'visible';
+      if (!visible && awayStartedAtRef.current === null) {
+        awayStartedAtRef.current = Date.now();
+      }
+      if (visible) {
+        registerAwayReturn();
+      }
+      setIsVisible(visible);
+    };
+
+    const handleBlur = () => {
+      if (awayStartedAtRef.current === null) {
+        awayStartedAtRef.current = Date.now();
+      }
+      setIsFocused(false);
+    };
+
+    const handleFocus = () => {
+      registerAwayReturn();
+      setIsFocused(true);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [registerAwayReturn]);
 
   useEffect(() => {
     if (!sessionState) return;

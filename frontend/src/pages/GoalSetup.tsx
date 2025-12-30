@@ -25,6 +25,8 @@ const GoalSetup: React.FC = () => {
     return d.hours * 3600 + d.minutes * 60 + d.seconds;
   };
 
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+
   const handleStartSession = async () => {
     if (!title.trim()) {
       toast({
@@ -45,7 +47,6 @@ const GoalSetup: React.FC = () => {
 
     setIsLoading(true);
 
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     const payload: CreateSessionPayload = {
       title: title.trim(),
       description: description.trim() || null,
@@ -54,6 +55,11 @@ const GoalSetup: React.FC = () => {
 
     if (!apiBaseUrl) {
       console.error('VITE_API_BASE_URL is not configured');
+      toast({
+        title: 'API is not configured',
+        description: 'Set VITE_API_BASE_URL in .env.local (e.g., http://localhost:4000).',
+        variant: 'destructive',
+      });
       setIsLoading(false);
       return;
     }

@@ -18,7 +18,7 @@ const FocusReport: React.FC = () => {
   const sessionId = (location.state as { sessionId?: string } | null)?.sessionId;
   const [report, setReport] = useState<SessionReport | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -112,7 +112,7 @@ const FocusReport: React.FC = () => {
                 <div>
                   <FocusScoreGauge score={report.overall_focus_score} />
                   <p className="text-xs text-success mt-2 text-center">
-                    ↑ 5 Compared to previous period
+                    ↑ Compared to previous period
                   </p>
                 </div>
                 <QualityMetrics 
