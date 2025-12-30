@@ -25,7 +25,7 @@ export const mockSessionReport: SessionReport = {
 };
 
 export const mockCreateSessionResponse: CreateSessionResponse = {
-  id: 'session_' + Date.now(),
+  session_id: 'session_' + Date.now(),
   title: '',
   description: '',
   planned_duration_seconds: 0,

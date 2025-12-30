@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { StopCircle, Focus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { simulateApiDelay } from '@/data/mockData';
 
 interface SessionState {
   sessionId: string;
@@ -15,7 +14,9 @@ const ActiveSession: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const sessionState = location.state as SessionState | null;
-
+  const apiBaseUrl = import.meta.env.NEXT_PUBLIC_API_BASE_URL;
+  const metricsIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const remainingRef = useRef(0);
   const [remainingSeconds, setRemainingSeconds] = useState(
     sessionState?.durationSeconds || 0
   );
@@ -27,6 +28,91 @@ const ActiveSession: React.FC = () => {
       return;
     }
   }, [sessionState, navigate]);
+
+  const formatTime = (seconds: number): string => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    remainingRef.current = remainingSeconds;
+  }, [remainingSeconds]);
+
+  const sendSessionMetrics = useCallback(async () => {
+    if (!sessionState || !apiBaseUrl) {
+      if (!apiBaseUrl) {
+        console.error('NEXT_PUBLIC_API_BASE_URL is not configured');
+      }
+      return;
+    }
+
+    const elapsedSeconds = Math.max(
+      sessionState.durationSeconds - remainingRef.current,
+      0
+    );
+    const avgFocusScore = Math.min(
+      Math.round((elapsedSeconds / Math.max(sessionState.durationSeconds, 1)) * 100),
+      100
+    );
+
+    const payload = {
+      session_id: sessionState.sessionId,
+      avg_focus_score: avgFocusScore,
+      productive_seconds: elapsedSeconds,
+      unproductive_seconds: 0,
+      distractions: [],
+    };
+
+    try {
+      await fetch(`${apiBaseUrl}/session/metrics`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error('Error sending session metrics:', error);
+    }
+  }, [apiBaseUrl, sessionState]);
+
+  useEffect(() => {
+    if (!sessionState) return;
+
+    metricsIntervalRef.current = setInterval(() => {
+      sendSessionMetrics();
+    }, 30000);
+
+    return () => {
+      if (metricsIntervalRef.current) {
+        clearInterval(metricsIntervalRef.current);
+        metricsIntervalRef.current = null;
+      }
+    };
+  }, [sendSessionMetrics, sessionState]);
+
+  useEffect(() => {
+    if (remainingSeconds <= 0 && metricsIntervalRef.current) {
+      clearInterval(metricsIntervalRef.current);
+      metricsIntervalRef.current = null;
+    }
+  }, [remainingSeconds]);
+
+  const handleEndSession = useCallback(async () => {
+    if (isEnding) return;
+    setIsEnding(true);
+
+    if (metricsIntervalRef.current) {
+      clearInterval(metricsIntervalRef.current);
+      metricsIntervalRef.current = null;
+    }
+
+    await sendSessionMetrics();
+
+    navigate('/report', {
+      state: { sessionId: sessionState?.sessionId },
+    });
+  }, [isEnding, navigate, sendSessionMetrics, sessionState?.sessionId]);
 
   useEffect(() => {
     if (remainingSeconds <= 0) return;
@@ -43,27 +129,7 @@ const ActiveSession: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [remainingSeconds]);
-
-  const formatTime = (seconds: number): string => {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
-  const handleEndSession = useCallback(async () => {
-    if (isEnding) return;
-    setIsEnding(true);
-
-    // Simulate API call: POST /session/end
-    console.log('Ending session:', sessionState?.sessionId);
-    await simulateApiDelay(500);
-
-    navigate('/report', {
-      state: { sessionId: sessionState?.sessionId },
-    });
-  }, [isEnding, navigate, sessionState?.sessionId]);
+  }, [handleEndSession, remainingSeconds]);
 
   if (!sessionState) {
     return null;

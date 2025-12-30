@@ -11,27 +11,48 @@ import { DistractionList } from '@/components/DistractionList';
 import { ProductiveSitesList } from '@/components/ProductiveSitesList';
 import { InsightBox } from '@/components/InsightBox';
 import { SessionReport } from '@/types/session';
-import { mockSessionReport, simulateApiDelay } from '@/data/mockData';
 
 const FocusReport: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const sessionId = (location.state as { sessionId?: string } | null)?.sessionId;
   const [report, setReport] = useState<SessionReport | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const apiBaseUrl = import.meta.env.NEXT_PUBLIC_API_BASE_URL;
 
   useEffect(() => {
     const fetchReport = async () => {
-      // Simulate API call: GET /session/:id/report
-      const sessionId = location.state?.sessionId;
-      console.log('Fetching report for session:', sessionId);
-      
-      await simulateApiDelay(800);
-      setReport(mockSessionReport);
-      setIsLoading(false);
+      if (!sessionId) {
+        console.error('No session_id available for report');
+        navigate('/');
+        return;
+      }
+
+      if (!apiBaseUrl) {
+        console.error('NEXT_PUBLIC_API_BASE_URL is not configured');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/session/${sessionId}/report`);
+
+        if (!response.ok) {
+          console.error('Failed to fetch session report', response.statusText);
+          throw new Error('Request failed');
+        }
+
+        const data: SessionReport = await response.json();
+        setReport(data);
+      } catch (error) {
+        console.error('Error fetching session report:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchReport();
-  }, [location.state]);
+  }, [apiBaseUrl, navigate, sessionId]);
 
   const handleNewSession = () => {
     navigate('/');
@@ -111,9 +132,12 @@ const FocusReport: React.FC = () => {
               </div>
               <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
                 <DurationStats
-                  totalMinutes={120}
-                  avgMinutes={35}
-                  maxMinutes={90}
+                  totalMinutes={Math.round((report.productive_time_seconds + report.unproductive_time_seconds) / 60)}
+                  avgMinutes={Math.round(report.productive_time_seconds / 60)}
+                  maxMinutes={Math.max(
+                    Math.round(report.productive_time_seconds / 60),
+                    Math.round(report.unproductive_time_seconds / 60)
+                  )}
                 />
               </div>
             </div>

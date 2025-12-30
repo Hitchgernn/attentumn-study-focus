@@ -1,16 +1,16 @@
 // API Request Types
 export interface CreateSessionPayload {
   title: string;
-  description: string;
+  description: string | null;
   planned_duration_seconds: number;
 }
 
 export interface CreateSessionResponse {
-  id: string;
-  title: string;
-  description: string;
-  planned_duration_seconds: number;
-  started_at: string;
+  session_id: string;
+  title?: string;
+  description?: string | null;
+  planned_duration_seconds?: number;
+  started_at?: string;
 }
 
 // API Response Types

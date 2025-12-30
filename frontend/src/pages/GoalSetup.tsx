@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { DurationPicker } from '@/components/DurationPicker';
-import { DurationInput, CreateSessionPayload } from '@/types/session';
-import { mockCreateSessionResponse, simulateApiDelay } from '@/data/mockData';
+import { DurationInput, CreateSessionPayload, CreateSessionResponse } from '@/types/session';
 import { useToast } from '@/hooks/use-toast';
 
 const GoalSetup: React.FC = () => {
@@ -46,34 +45,56 @@ const GoalSetup: React.FC = () => {
 
     setIsLoading(true);
 
-    // Simulate API call: POST /session/create
+    const apiBaseUrl = import.meta.env.NEXT_PUBLIC_API_BASE_URL;
     const payload: CreateSessionPayload = {
       title: title.trim(),
-      description: description.trim(),
+      description: description.trim() || null,
       planned_duration_seconds: totalSeconds,
     };
 
-    console.log('Creating session with payload:', payload);
+    if (!apiBaseUrl) {
+      console.error('NEXT_PUBLIC_API_BASE_URL is not configured');
+      setIsLoading(false);
+      return;
+    }
 
-    await simulateApiDelay(500);
+    try {
+      const response = await fetch(`${apiBaseUrl}/session/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-    const response = {
-      ...mockCreateSessionResponse,
-      ...payload,
-      id: 'session_' + Date.now(),
-    };
+      if (!response.ok) {
+        console.error('Failed to create session', response.statusText);
+        throw new Error('Request failed');
+      }
 
-    console.log('Session created:', response);
+      const data: CreateSessionResponse = await response.json();
 
-    // Navigate to active session with session data
-    navigate('/session', {
-      state: {
-        sessionId: response.id,
-        title: response.title,
-        description: response.description,
-        durationSeconds: response.planned_duration_seconds,
-      },
-    });
+      if (!data.session_id) {
+        console.error('No session_id returned from create session');
+        throw new Error('Missing session_id');
+      }
+
+      navigate('/session', {
+        state: {
+          sessionId: data.session_id,
+          title: payload.title,
+          description: payload.description || '',
+          durationSeconds: payload.planned_duration_seconds,
+        },
+      });
+    } catch (error) {
+      console.error('Error creating session:', error);
+      toast({
+        title: 'Unable to start session',
+        description: 'Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
