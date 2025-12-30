@@ -1,0 +1,24 @@
+## Overview
+Attentum Study Focus is a two-part app for planning focus sessions, tracking metrics, and reviewing reports. The backend is an Express + Prisma API (SQLite by default) and the frontend is a Vite + React UI.
+
+## Prerequisites
+- Node.js 18+ and npm
+
+## Backend (API)
+1) `cd backend`
+2) Copy `.env` if missing (default `DATABASE_URL="file:./dev.db"` for SQLite).
+3) Install deps: `npm install`
+4) Create/update the database: `npm run prisma:migrate`
+5) Start the dev server on http://localhost:4000: `npm run dev`
+   - Prod build: `npm run build && npm start`
+
+## Frontend (Web)
+1) `cd frontend`
+2) Create `.env.local` with `NEXT_PUBLIC_API_BASE_URL=http://localhost:4000`
+3) Install deps: `npm install`
+4) Start Vite on http://localhost:8080: `npm run dev`
+   - Build: `npm run build`
+
+## Notes
+- Run backend and frontend in separate terminals.
+- Adjust `NEXT_PUBLIC_API_BASE_URL` if your API runs on a different host/port.
