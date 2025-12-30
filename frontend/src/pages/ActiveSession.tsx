@@ -109,10 +109,28 @@ const ActiveSession: React.FC = () => {
 
     await sendSessionMetrics();
 
+    if (sessionState && apiBaseUrl) {
+      try {
+        const response = await fetch(`${apiBaseUrl}/session/end`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionState.sessionId }),
+        });
+
+        if (!response.ok) {
+          console.error('Failed to end session', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error ending session:', error);
+      }
+    } else if (!apiBaseUrl) {
+      console.error('NEXT_PUBLIC_API_BASE_URL is not configured');
+    }
+
     navigate('/report', {
       state: { sessionId: sessionState?.sessionId },
     });
-  }, [isEnding, navigate, sendSessionMetrics, sessionState?.sessionId]);
+  }, [apiBaseUrl, isEnding, navigate, sendSessionMetrics, sessionState]);
 
   useEffect(() => {
     if (remainingSeconds <= 0) return;
