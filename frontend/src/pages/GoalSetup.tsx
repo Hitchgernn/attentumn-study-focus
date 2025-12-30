@@ -45,7 +45,7 @@ const GoalSetup: React.FC = () => {
 
     setIsLoading(true);
 
-    const apiBaseUrl = import.meta.env.NEXT_PUBLIC_API_BASE_URL;
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     const payload: CreateSessionPayload = {
       title: title.trim(),
       description: description.trim() || null,
@@ -53,7 +53,7 @@ const GoalSetup: React.FC = () => {
     };
 
     if (!apiBaseUrl) {
-      console.error('NEXT_PUBLIC_API_BASE_URL is not configured');
+      console.error('VITE_API_BASE_URL is not configured');
       setIsLoading(false);
       return;
     }

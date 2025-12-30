@@ -18,7 +18,7 @@ const FocusReport: React.FC = () => {
   const sessionId = (location.state as { sessionId?: string } | null)?.sessionId;
   const [report, setReport] = useState<SessionReport | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const apiBaseUrl = import.meta.env.NEXT_PUBLIC_API_BASE_URL;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -29,7 +29,7 @@ const FocusReport: React.FC = () => {
       }
 
       if (!apiBaseUrl) {
-        console.error('NEXT_PUBLIC_API_BASE_URL is not configured');
+        console.error('VITE_API_BASE_URL is not configured');
         setIsLoading(false);
         return;
       }

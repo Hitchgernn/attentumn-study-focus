@@ -14,7 +14,7 @@ const ActiveSession: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const sessionState = location.state as SessionState | null;
-  const apiBaseUrl = import.meta.env.NEXT_PUBLIC_API_BASE_URL;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const metricsIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const remainingRef = useRef(0);
   const [remainingSeconds, setRemainingSeconds] = useState(
@@ -43,7 +43,7 @@ const ActiveSession: React.FC = () => {
   const sendSessionMetrics = useCallback(async () => {
     if (!sessionState || !apiBaseUrl) {
       if (!apiBaseUrl) {
-        console.error('NEXT_PUBLIC_API_BASE_URL is not configured');
+        console.error('VITE_API_BASE_URL is not configured');
       }
       return;
     }
@@ -124,7 +124,7 @@ const ActiveSession: React.FC = () => {
         console.error('Error ending session:', error);
       }
     } else if (!apiBaseUrl) {
-      console.error('NEXT_PUBLIC_API_BASE_URL is not configured');
+      console.error('VITE_API_BASE_URL is not configured');
     }
 
     navigate('/report', {

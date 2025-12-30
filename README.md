@@ -14,11 +14,11 @@ Attentum Study Focus is a two-part app for planning focus sessions, tracking met
 
 ## Frontend (Web)
 1) `cd frontend`
-2) Create `.env.local` with `NEXT_PUBLIC_API_BASE_URL=http://localhost:4000`
+2) Create `.env.local` with `VITE_API_BASE_URL=http://localhost:4000`
 3) Install deps: `npm install`
 4) Start Vite on http://localhost:8080: `npm run dev`
    - Build: `npm run build`
 
 ## Notes
 - Run backend and frontend in separate terminals.
-- Adjust `NEXT_PUBLIC_API_BASE_URL` if your API runs on a different host/port.
+- Adjust `VITE_API_BASE_URL` if your API runs on a different host/port.
