@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { StopCircle, Focus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BrandBar } from '@/components/BrandBar';
 
 interface SessionState {
   sessionId: string;
@@ -246,38 +247,40 @@ const ActiveSession: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Animated background circles */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[500px] h-[500px] rounded-full border border-primary/10 animate-breathe" />
-        <div className="absolute w-[400px] h-[400px] rounded-full border border-primary/15 animate-breathe" style={{ animationDelay: '1s' }} />
-        <div className="absolute w-[300px] h-[300px] rounded-full border border-primary/20 animate-breathe" style={{ animationDelay: '2s' }} />
-      </div>
+      <BrandBar />
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, rgba(20,46,58,0.38) 0%, rgba(25,51,63,0.28) 35%, rgba(78,58,38,0.18) 100%), url('/autumn-bg.jpg')",
+          backgroundColor: 'hsl(var(--background))',
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/10 to-amber-900/10 z-0 pointer-events-none" />
 
-      <div className="relative z-10 text-center animate-fade-in">
+      <div className="relative z-10 w-full max-w-3xl flex flex-col items-center text-center gap-8 animate-fade-in">
         {/* Status indicator */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-3 h-3 rounded-full bg-success animate-pulse" />
-          <span className="text-muted-foreground font-medium flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-slate-900/50 border border-white/15 backdrop-blur-md text-white/90">
+          <div className="w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
+          <span className="font-medium flex items-center gap-2">
             <Focus className="w-4 h-4" />
             Focusing...
           </span>
         </div>
 
         {/* Session title */}
-        <h1 className="font-display text-2xl font-semibold text-foreground mb-12">
+        <h1 className="font-display text-3xl md:text-4xl font-semibold text-white drop-shadow-lg max-w-3xl">
           {sessionState.title}
         </h1>
 
         {/* Timer display */}
-        <div className="relative mb-12">
-          <div className="timer-display text-foreground">
+        <div className="flex flex-col items-center gap-6">
+          <div className="timer-display text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.35)] text-7xl md:text-8xl">
             {formatTime(remainingSeconds)}
           </div>
-          
-          {/* Progress bar */}
-          <div className="mt-6 w-64 mx-auto h-1.5 bg-muted rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-primary rounded-full transition-all duration-1000 ease-linear"
+          <div className="mt-2 w-full md:w-96 mx-auto h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm border border-white/15">
+            <div
+              className="h-full bg-white rounded-full transition-all duration-1000 ease-linear"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -285,11 +288,11 @@ const ActiveSession: React.FC = () => {
 
         {/* End session button */}
         <Button
-          variant="destructive"
+          variant="secondary"
           size="lg"
           onClick={handleEndSession}
           disabled={isEnding}
-          className="px-8"
+          className="px-8 bg-white text-slate-900 hover:bg-white/90 border border-white/40 shadow-xl rounded-full"
         >
           <StopCircle className="w-5 h-5 mr-2" />
           {isEnding ? 'Ending Session...' : 'End Session'}

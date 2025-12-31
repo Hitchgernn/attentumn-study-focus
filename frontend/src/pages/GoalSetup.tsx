@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Timer } from 'lucide-react';
+import { Leaf, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { DurationPicker } from '@/components/DurationPicker';
 import { DurationInput, CreateSessionPayload, CreateSessionResponse } from '@/types/session';
 import { useToast } from '@/hooks/use-toast';
+import { BrandBar } from '@/components/BrandBar';
 
 const GoalSetup: React.FC = () => {
   const navigate = useNavigate();
@@ -104,56 +105,74 @@ const GoalSetup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <div className="w-full max-w-md animate-fade-in">
-        <div className="text-center mb-10">
-          <h1 className="font-display text-3xl font-bold text-foreground">
-            Hi <span className="text-primary">Chris</span>, what's your goal today?
-          </h1>
-        </div>
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
+      <BrandBar />
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, rgba(20,46,58,0.38) 0%, rgba(25,51,63,0.28) 35%, rgba(78,58,38,0.18) 100%), url('/autumn-bg.jpg')",
+          backgroundColor: 'hsl(var(--background))',
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/10 to-amber-900/10 z-0 pointer-events-none" />
+      <div className="w-full max-w-lg animate-fade-in relative z-10">
+        <div className="bg-card/50 border border-border/70 rounded-3xl shadow-2xl p-8 backdrop-blur-2xl">
+          <div className="text-center mb-10 space-y-4">
+            <div className="flex justify-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 shadow-sm border border-amber-200">
+                <Leaf className="w-4 h-4" />
+                <span className="text-sm font-medium">Autumn focus mode</span>
+              </div>
+            </div>
+            <h1 className="font-display text-3xl font-bold text-foreground">
+              Hi <span className="text-primary">Hitchgernn</span>, what's your goal today?
+            </h1>
+          </div>
 
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title" className="text-sm font-medium">
-              Title
-            </Label>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-sm font-medium">
+                Title
+              </Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., Complete React project"
-              className="h-12"
+              className="h-12 bg-white/60 border-white/70 text-slate-900 placeholder:text-slate-500 shadow-sm focus-visible:ring-white/70 focus-visible:border-white/80 focus-visible:ring-offset-0"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium">
-              Description
-            </Label>
-            <Textarea
+                Description
+              </Label>
+              <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="What do you want to accomplish?"
-              className="min-h-[100px] resize-none"
+              className="min-h-[100px] resize-none bg-white/60 border-white/70 text-slate-900 placeholder:text-slate-500 shadow-sm focus-visible:ring-white/70 focus-visible:border-white/80 focus-visible:ring-offset-0"
             />
           </div>
 
-          <div className="pt-4">
-            <DurationPicker value={duration} onChange={setDuration} />
-          </div>
+            <div className="pt-4">
+              <DurationPicker value={duration} onChange={setDuration} />
+            </div>
 
-          <div className="pt-6">
-            <Button
-              variant="focus"
-              size="xl"
-              className="w-full"
-              onClick={handleStartSession}
-              disabled={isLoading}
-            >
-              <Timer className="w-5 h-5" />
-              {isLoading ? 'Starting...' : 'Start Focus Session'}
-            </Button>
+            <div className="pt-6">
+              <Button
+                variant="focus"
+                size="xl"
+                className="w-full"
+                onClick={handleStartSession}
+                disabled={isLoading}
+              >
+                <Timer className="w-5 h-5" />
+                {isLoading ? 'Starting...' : 'Start Focus Session'}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

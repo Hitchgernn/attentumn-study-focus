@@ -17,9 +17,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   variant = 'default',
 }) => {
   const bgColors = {
-    default: 'bg-card',
-    success: 'bg-success/10',
-    warning: 'bg-warning/20',
+    default: 'bg-white/50',
+    success: 'bg-white/50',
+    warning: 'bg-white/50',
   };
 
   const iconColors = {
@@ -29,7 +29,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   };
 
   return (
-    <div className={`metric-card ${bgColors[variant]} min-h-[120px]`}>
+    <div className={`metric-card ${bgColors[variant]} min-h-[120px] border border-white/45 shadow-md backdrop-blur-sm`}>
       <div className={`rounded-full p-2 mb-2 ${iconColors[variant]}`}>
         <Icon className="w-5 h-5" />
       </div>

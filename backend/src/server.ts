@@ -34,7 +34,7 @@ app.use('/session', sessionRoutes);
 app.use('/session', reportRoutes);
 
 app.get('/', (_req, res) => {
-  res.send('Focus Guardian API is running');
+  res.send('Attentumn API is running');
 });
 
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -44,6 +44,6 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
 });
 
 app.listen(PORT, () => {
-  console.log(`Focus Guardian backend running on port ${PORT}`);
+  console.log(`Attentumn backend running on port ${PORT}`);
   console.log(`API base URL: http://localhost:${PORT}`);
 });

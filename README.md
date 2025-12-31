@@ -1,5 +1,5 @@
 ## Overview
-Attentum Study Focus is a two-part app for planning focus sessions, tracking metrics, and reviewing reports. The backend is an Express + Prisma API (SQLite by default) and the frontend is a Vite + React UI.
+Attentumn Study Focus is a two-part app for planning focus sessions, tracking metrics, and reviewing reports. The backend is an Express + Prisma API (SQLite by default) and the frontend is a Vite + React UI.
 
 ## Prerequisites
 - Node.js 18+ and npm
