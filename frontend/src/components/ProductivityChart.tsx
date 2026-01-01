@@ -1,5 +1,4 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 interface ProductivityChartProps {
   productiveSeconds: number;
@@ -11,44 +10,31 @@ export const ProductivityChart: React.FC<ProductivityChartProps> = ({
   unproductiveSeconds,
 }) => {
   const total = productiveSeconds + unproductiveSeconds;
-  const productivePercent = Math.round((productiveSeconds / total) * 100);
-  
-  const data = [
-    { name: 'Productive', value: productiveSeconds },
-    { name: 'Unproductive', value: unproductiveSeconds },
-  ];
-
-  const COLORS = ['hsl(var(--success))', 'hsl(var(--chart-neutral))'];
+  const productivePercent =
+    total > 0 ? Math.round((productiveSeconds / total) * 100) : 0;
+  const productiveMinutes = Math.round(productiveSeconds / 60);
+  const unproductiveMinutes = Math.round(unproductiveSeconds / 60);
 
   return (
     <div className="focus-card">
       <h3 className="text-sm text-muted-foreground mb-2">Productive vs Unproductive Time</h3>
-      <div className="flex items-center gap-4">
-        <div className="w-24 h-24">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                innerRadius={25}
-                outerRadius={40}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {data.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+      <div className="space-y-3">
+        <div className="flex items-baseline gap-2">
+          <span className="text-4xl font-display font-bold text-success">{productivePercent}%</span>
+          <span className="text-success font-medium">Productive</span>
         </div>
-        <div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-display font-bold text-success">{productivePercent}%</span>
-            <span className="text-success font-medium">Productive</span>
+        <p className="text-xs text-muted-foreground">of total focus time</p>
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="rounded-lg border border-border/60 bg-muted/40 p-3">
+            <p className="text-xs text-muted-foreground">Productive minutes</p>
+            <p className="text-lg font-semibold text-success">{productiveMinutes} min</p>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">of total focus time</p>
-          <p className="text-xs text-success mt-1">↑ 12% Compared to previous period</p>
+          <div className="rounded-lg border border-border/60 bg-muted/40 p-3">
+            <p className="text-xs text-muted-foreground">Unproductive minutes</p>
+            <p className="text-lg font-semibold text-muted-foreground">{unproductiveMinutes} min</p>
+          </div>
         </div>
+        <p className="text-xs text-success">↑ 12% Compared to previous period</p>
       </div>
     </div>
   );
