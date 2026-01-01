@@ -117,7 +117,7 @@ const GoalSetup: React.FC = () => {
       />
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/10 to-amber-900/10 z-0 pointer-events-none" />
       <div className="w-full max-w-lg animate-fade-in relative z-10">
-        <div className="bg-card/50 border border-border/70 rounded-3xl shadow-2xl p-8 backdrop-blur-2xl">
+        <div className="bg-card/20 border border-slate-900/30 rounded-3xl shadow-2xl p-8 backdrop-blur-md">
           <div className="text-center mb-10 space-y-4">
             <div className="flex justify-center">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 shadow-sm border border-amber-200">
@@ -126,13 +126,13 @@ const GoalSetup: React.FC = () => {
               </div>
             </div>
             <h1 className="font-display text-3xl font-bold text-foreground">
-              Hi <span className="text-primary">Hitchgernn</span>, what's your goal today?
+              Hi Annee, what's your goal today?
             </h1>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title" className="text-sm font-medium">
+              <Label htmlFor="title" className="text-md font-medium">
                 Title
               </Label>
             <Input
@@ -140,12 +140,12 @@ const GoalSetup: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., Complete React project"
-              className="h-12 bg-white/60 border-white/70 text-slate-900 placeholder:text-slate-500 shadow-sm focus-visible:ring-white/70 focus-visible:border-white/80 focus-visible:ring-offset-0"
+              className="h-12 bg-white/30 border-slate-900/25 text-black placeholder:text-slate-500 shadow-sm  focus-visible:border-slate-900/20 focus-visible:ring-offset-0"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-sm font-medium">
+            <Label htmlFor="description" className="text-md font-medium">
                 Description
               </Label>
               <Textarea
@@ -153,7 +153,7 @@ const GoalSetup: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="What do you want to accomplish?"
-              className="min-h-[100px] resize-none bg-white/60 border-white/70 text-slate-900 placeholder:text-slate-500 shadow-sm focus-visible:ring-white/70 focus-visible:border-white/80 focus-visible:ring-offset-0"
+              className="min-h-[100px] resize-none bg-white/25 border-slate-900/30 text-black placeholder:text-slate-500 shadow-sm focus-visible:border-slate-900/20 focus-visible:ring-offset-0"
             />
           </div>
 

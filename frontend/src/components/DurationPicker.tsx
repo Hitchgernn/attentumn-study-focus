@@ -53,7 +53,7 @@ export const DurationPicker: React.FC<DurationPickerProps> = ({ value, onChange 
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="flex items-center gap-1 text-muted-foreground text-sm">
+      <div className="flex items-center gap-1 text-muted-foreground text-md font-normal text-black">
         <span className="w-20 text-center">Hours</span>
         <span className="w-4"></span>
         <span className="w-20 text-center">Minutes</span>
@@ -69,7 +69,7 @@ export const DurationPicker: React.FC<DurationPickerProps> = ({ value, onChange 
           onChange={(e) => handleChange('hours', e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, 'hours', minutesRef)}
           onFocus={(e) => e.target.select()}
-          className="duration-input text-foreground focus:text-primary"
+          className="duration-input text-foreground focus:text-primary text-black"
           maxLength={2}
         />
         <span className="text-4xl font-light text-muted-foreground mx-1">:</span>
@@ -81,7 +81,7 @@ export const DurationPicker: React.FC<DurationPickerProps> = ({ value, onChange 
           onChange={(e) => handleChange('minutes', e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, 'minutes', secondsRef)}
           onFocus={(e) => e.target.select()}
-          className="duration-input text-foreground focus:text-primary"
+          className="duration-input text-foreground focus:text-primary text-black"
           maxLength={2}
         />
         <span className="text-4xl font-light text-muted-foreground mx-1">:</span>
@@ -93,7 +93,7 @@ export const DurationPicker: React.FC<DurationPickerProps> = ({ value, onChange 
           onChange={(e) => handleChange('seconds', e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, 'seconds')}
           onFocus={(e) => e.target.select()}
-          className="duration-input text-foreground focus:text-primary"
+          className="duration-input text-foreground focus:text-primary text-black"
           maxLength={2}
         />
       </div>
